@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface ChallengeUseCase {
 
-    Movie updateMovie(String newDescription);
+    void updateMovie(Long episodeId, String newDescription);
 
     List<Movie> listMovies();
 
-    Movie getMovie(Long movieId);
+    Movie getMovie(Long episodeId);
 }
