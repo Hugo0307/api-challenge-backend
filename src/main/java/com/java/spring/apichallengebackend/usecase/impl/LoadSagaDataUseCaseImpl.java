@@ -41,6 +41,7 @@ public class LoadSagaDataUseCaseImpl implements LoadSagaDataUsecase {
                     .director(movie.getDirector())
                     .producer(movie.getProducer())
                     .release_date(movie.getRelease_date())
+                    .version("v1")
                     .build());
                 repositoryUsecase.saveMovie(entities);
             });

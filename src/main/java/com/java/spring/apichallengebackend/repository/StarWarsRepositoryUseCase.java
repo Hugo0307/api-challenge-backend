@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface StarWarsRepositoryUseCase {
 
-    void updateDescriptionMovie(Long episodeId, String description);
+    void updateDescriptionMovie(Long episodeId, String description, String version);
 
     List<Movie> getMovies();
 

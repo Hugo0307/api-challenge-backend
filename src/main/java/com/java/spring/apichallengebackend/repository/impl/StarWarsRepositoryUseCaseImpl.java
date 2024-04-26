@@ -7,12 +7,13 @@ import com.java.spring.apichallengebackend.repository.entity.StarWarsEntity;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import static java.util.Objects.isNull;
 
@@ -24,8 +25,18 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
     private final SagaStarWarsRepository repository;
 
     @Override
-    public void updateDescriptionMovie(Long episodeId, String description) {
-        repository.updateDescriptionMovie(episodeId, description);
+    @Transactional
+    public void updateDescriptionMovie(Long episodeId, String description, String version) {
+        boolean isExistEntity = repository.existsById(episodeId);
+        if (!isExistEntity) {
+            throw new IllegalArgumentException("Film Not Found to ID: " + episodeId);
+        }
+
+        try {
+            repository.updateDescriptionMovie(episodeId, description, version);
+        } catch (Exception e) {
+            log.error("An error occurred while update data from the database {}", e);
+        }
     }
 
     @Override
@@ -48,16 +59,17 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
         Movie movie = null;
         try {
             if (isNull(episodeId)) {
-                Optional<StarWarsEntity> entityOptional = repository.findOne(Example.of(new StarWarsEntity()));
+                Long generateRandomEpisodeId = new Random().nextLong(1L, 7L);
+                Optional<StarWarsEntity> entityOptional = repository.findById(generateRandomEpisodeId);
                 movie = entityOptional
                         .map(StarWarsRepositoryUseCaseImpl::buildMovie)
-                        .orElseThrow();
+                        .orElseThrow(() -> new IllegalArgumentException("Films Not Found"));
 
             } else {
                 Optional<StarWarsEntity> entityOptional = repository.findById(episodeId);
                 movie = entityOptional
                         .map(StarWarsRepositoryUseCaseImpl::buildMovie)
-                        .orElseThrow();
+                        .orElseThrow(() -> new IllegalArgumentException("Film Not Found to ID: " + episodeId));
             }
 
         } catch (Exception e) {
@@ -75,6 +87,7 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
                 .director(entity.getDirector())
                 .producer(entity.getProducer())
                 .release_date(entity.getRelease_date())
+                .version(entity.getVersion())
                 .build();
     }
 

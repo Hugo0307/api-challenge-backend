@@ -18,4 +18,7 @@ public class Movie {
     private String director;
     private String producer;
     private String release_date;
+
+    @Setter
+    private String version;
 }

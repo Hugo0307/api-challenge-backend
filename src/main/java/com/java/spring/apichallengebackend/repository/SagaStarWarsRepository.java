@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 public interface SagaStarWarsRepository extends JpaRepository<StarWarsEntity, Long> {
 
     @Modifying
-    @Query("update movie m set m.opening_crawl = :opening_crawl where m.episode_id = :episode_id")
-    void updateDescriptionMovie(@Param(value = "episode_id") Long episode_id, @Param(value = "opening_crawl") String opening_crawl);
+    @Query(value = "update movie m set m.opening_crawl = :opening_crawl, m.version = :version where m.episode_id = :episode_id")
+    void updateDescriptionMovie(@Param(value = "episode_id") Long episode_id, 
+                                @Param(value = "opening_crawl") String opening_crawl,
+                                @Param(value = "version") String version);
 }

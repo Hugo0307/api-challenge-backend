@@ -37,4 +37,8 @@ public class StarWarsEntity {
 
     @Column(name = "release_date")
     private String release_date;
+
+    @Setter
+    @Column(name = "version")
+    private String version;
 }
