@@ -4,8 +4,9 @@ import com.java.spring.apichallengebackend.domain.Movie;
 import com.java.spring.apichallengebackend.repository.SagaStarWarsRepository;
 import com.java.spring.apichallengebackend.repository.StarWarsRepositoryUseCase;
 import com.java.spring.apichallengebackend.repository.entity.StarWarsEntity;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +18,10 @@ import static java.util.Objects.isNull;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase {
 
-    @Autowired
-    private SagaStarWarsRepository repository;
+    private final SagaStarWarsRepository repository;
 
     @Override
     public void updateDescriptionMovie(Long episodeId, String description) {
@@ -75,5 +76,15 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
                 .producer(entity.getProducer())
                 .release_date(entity.getRelease_date())
                 .build();
+    }
+
+    @Override
+    public void saveMovie(List<StarWarsEntity> entities) {
+        try {
+            repository.saveAll(entities);
+        } catch (Exception e) {
+            log.error("An error ocurred while save data: {}", e.getMessage());
+        }
+        
     }
 }
