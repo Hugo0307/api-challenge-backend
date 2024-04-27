@@ -23,7 +23,7 @@ public class CallExternalClientGatewayimpl implements CallExternalClientGateway 
         try {
             return Optional.ofNullable(client.getFilms());
         } catch (FeignException e) {
-            log.error("ERROR: {}", e.getMessage());
+            log.error("Integration external with error, geting data by file");
             return Optional.empty();
         }
     }

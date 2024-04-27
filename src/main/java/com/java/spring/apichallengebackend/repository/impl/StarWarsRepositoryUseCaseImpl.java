@@ -1,12 +1,16 @@
 package com.java.spring.apichallengebackend.repository.impl;
 
 import com.java.spring.apichallengebackend.domain.Movie;
+import com.java.spring.apichallengebackend.enums.ChallengeTypeErrorEnum;
+import com.java.spring.apichallengebackend.exception.ChallengeCustomException;
 import com.java.spring.apichallengebackend.repository.SagaStarWarsRepository;
 import com.java.spring.apichallengebackend.repository.StarWarsRepositoryUseCase;
 import com.java.spring.apichallengebackend.repository.entity.StarWarsEntity;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +33,10 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
     public Movie updateDescriptionMovie(Long episodeId, String description, String version) {
         boolean isExistEntity = repository.existsById(episodeId);
         if (!isExistEntity) {
-            throw new IllegalArgumentException("Film Not Found to ID: " + episodeId);
+            throw new ChallengeCustomException(
+                ChallengeTypeErrorEnum.FILM_NOT_FOUND, 
+                HttpStatus.NOT_FOUND,
+                "Film Not Found");
         }
 
         try {
@@ -37,7 +44,10 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
             return getMovie(episodeId);
         } catch (Exception e) {
             log.error("An error occurred while update data from the database {}", e.getMessage());
-            throw e;
+            throw new ChallengeCustomException(
+                ChallengeTypeErrorEnum.INTERNAL_ERROR, 
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Error to update data");
         }
     }
 
@@ -52,6 +62,10 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
             });
         } catch (Exception e) {
             log.error("An error occurred while trying to retrieve data from the database {}", e.getMessage());
+            throw new ChallengeCustomException(
+                ChallengeTypeErrorEnum.INTERNAL_ERROR, 
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Error to retrieve data");
         }
         return movieList;
     }
@@ -65,13 +79,21 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
             Optional<StarWarsEntity> entityOptional = repository.findById(generateRandomEpisodeId);
             movie = entityOptional
                     .map(StarWarsRepositoryUseCaseImpl::buildMovie)
-                    .orElseThrow(() -> new IllegalArgumentException("Films Not Found"));
+                    .orElseThrow(() -> new ChallengeCustomException(
+                        ChallengeTypeErrorEnum.FILM_NOT_FOUND, 
+                        HttpStatus.NOT_FOUND,
+                        "Film Not Found")
+                    );
 
         } else {
             Optional<StarWarsEntity> entityOptional = repository.findById(episodeId);
             movie = entityOptional
                     .map(StarWarsRepositoryUseCaseImpl::buildMovie)
-                    .orElseThrow(() -> new IllegalArgumentException("Film Not Found to ID: " + episodeId));
+                    .orElseThrow(() -> new ChallengeCustomException(
+                        ChallengeTypeErrorEnum.FILM_NOT_FOUND, 
+                        HttpStatus.NOT_FOUND,
+                        "Film Not Found to ID: " + episodeId)
+                    );
         }
 
         return  movie;
@@ -79,8 +101,13 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
 
     @Override
     public String getVersion(Long episodeId) {
-        return repository.getVersion(episodeId)
-                    .orElseThrow(() -> new IllegalArgumentException("Film Not Found to ID: " + episodeId));
+        return repository
+            .getVersion(episodeId)
+            .orElseThrow(() -> new ChallengeCustomException(
+                ChallengeTypeErrorEnum.FILM_NOT_FOUND,
+                HttpStatus.NOT_FOUND,
+                "Film Not Found to ID: " + episodeId)
+            );          
     }
 
     @Override
@@ -89,6 +116,10 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
             repository.saveAll(entities);
         } catch (Exception e) {
             log.error("An error ocurred while save data: {}", e.getMessage());
+            throw new ChallengeCustomException(
+                ChallengeTypeErrorEnum.INTERNAL_ERROR, 
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Operation internal error");
         }
         
     }
