@@ -5,6 +5,9 @@ import com.java.spring.apichallengebackend.external.clients.StarWarsClient;
 import com.java.spring.apichallengebackend.external.gateway.CallExternalClientGateway;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,13 +19,12 @@ public class CallExternalClientGatewayimpl implements CallExternalClientGateway 
     private StarWarsClient client;
 
     @Override
-    public SagaStarWars executeCallExternalClient() {
+    public Optional<SagaStarWars> executeCallExternalClient() {
         try {
-            return client.getFilms();
+            return Optional.ofNullable(client.getFilms());
         } catch (FeignException e) {
-            log.error("ERROR: {}", e.contentUTF8());
-
+            log.error("ERROR: {}", e.getMessage());
+            return Optional.empty();
         }
-        return null;
     }
 }
