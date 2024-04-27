@@ -26,7 +26,7 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
 
     @Override
     @Transactional
-    public void updateDescriptionMovie(Long episodeId, String description, String version) {
+    public Movie updateDescriptionMovie(Long episodeId, String description, String version) {
         boolean isExistEntity = repository.existsById(episodeId);
         if (!isExistEntity) {
             throw new IllegalArgumentException("Film Not Found to ID: " + episodeId);
@@ -34,8 +34,10 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
 
         try {
             repository.updateDescriptionMovie(episodeId, description, version);
+            return getMovie(episodeId);
         } catch (Exception e) {
-            log.error("An error occurred while update data from the database {}", e);
+            log.error("An error occurred while update data from the database {}", e.getMessage());
+            throw e;
         }
     }
 
@@ -57,25 +59,38 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
     @Override
     public Movie getMovie(Long episodeId) {
         Movie movie = null;
-        try {
-            if (isNull(episodeId)) {
-                Long generateRandomEpisodeId = new Random().nextLong(1L, 7L);
-                Optional<StarWarsEntity> entityOptional = repository.findById(generateRandomEpisodeId);
-                movie = entityOptional
-                        .map(StarWarsRepositoryUseCaseImpl::buildMovie)
-                        .orElseThrow(() -> new IllegalArgumentException("Films Not Found"));
+        
+        if (isNull(episodeId)) {
+            Long generateRandomEpisodeId = new Random().nextLong(1L, 7L);
+            Optional<StarWarsEntity> entityOptional = repository.findById(generateRandomEpisodeId);
+            movie = entityOptional
+                    .map(StarWarsRepositoryUseCaseImpl::buildMovie)
+                    .orElseThrow(() -> new IllegalArgumentException("Films Not Found"));
 
-            } else {
-                Optional<StarWarsEntity> entityOptional = repository.findById(episodeId);
-                movie = entityOptional
-                        .map(StarWarsRepositoryUseCaseImpl::buildMovie)
-                        .orElseThrow(() -> new IllegalArgumentException("Film Not Found to ID: " + episodeId));
-            }
-
-        } catch (Exception e) {
-            log.error("An error occurred while trying to retrieve data from the database {}", e.getMessage());
+        } else {
+            Optional<StarWarsEntity> entityOptional = repository.findById(episodeId);
+            movie = entityOptional
+                    .map(StarWarsRepositoryUseCaseImpl::buildMovie)
+                    .orElseThrow(() -> new IllegalArgumentException("Film Not Found to ID: " + episodeId));
         }
+
         return  movie;
+    }
+
+    @Override
+    public String getVersion(Long episodeId) {
+        return repository.getVersion(episodeId)
+                    .orElseThrow(() -> new IllegalArgumentException("Film Not Found to ID: " + episodeId));
+    }
+
+    @Override
+    public void saveMovie(List<StarWarsEntity> entities) {
+        try {
+            repository.saveAll(entities);
+        } catch (Exception e) {
+            log.error("An error ocurred while save data: {}", e.getMessage());
+        }
+        
     }
 
     private static Movie buildMovie(StarWarsEntity entity) {
@@ -91,13 +106,4 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
                 .build();
     }
 
-    @Override
-    public void saveMovie(List<StarWarsEntity> entities) {
-        try {
-            repository.saveAll(entities);
-        } catch (Exception e) {
-            log.error("An error ocurred while save data: {}", e.getMessage());
-        }
-        
-    }
 }

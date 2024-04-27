@@ -19,11 +19,11 @@ public class ChallengeUseCaseImpl implements ChallengeUseCase {
     private final StarWarsRepositoryUseCase repositoryUseCase;
 
     @Override
-    public void updateMovie(Long episodeId, String newDescription) {
+    public Movie updateMovie(Long episodeId, String newDescription) {
 
         String newVersion = getNewVersion(episodeId);
         log.info("Updating version to {}", newVersion);
-        repositoryUseCase.updateDescriptionMovie(episodeId, newDescription, newVersion);
+        return repositoryUseCase.updateDescriptionMovie(episodeId, newDescription, newVersion);
     }
 
     @Override
@@ -37,8 +37,7 @@ public class ChallengeUseCaseImpl implements ChallengeUseCase {
     }
 
     private String getNewVersion(Long episodeId) {
-        Movie movie = repositoryUseCase.getMovie(episodeId);
-        String version = movie.getVersion();
+        String version = repositoryUseCase.getVersion(episodeId);
         int incrementalVersion = Integer.parseInt(version.substring(1));
         return "v".concat(String.valueOf(incrementalVersion+1));
     }
