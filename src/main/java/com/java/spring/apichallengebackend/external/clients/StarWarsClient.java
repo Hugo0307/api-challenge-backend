@@ -1,6 +1,7 @@
 package com.java.spring.apichallengebackend.external.clients;
 
-import com.java.spring.apichallengebackend.domain.SagaStarWars;
+import com.java.spring.apichallengebackend.external.dto.SagaStarWarsDto;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,5 +10,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 public interface StarWarsClient {
 
     @GetMapping(value = "/films", consumes = MediaType.APPLICATION_JSON_VALUE)
-    SagaStarWars getFilms();
+    SagaStarWarsDto getFilms();
 }

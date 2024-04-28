@@ -1,6 +1,5 @@
 package com.java.spring.apichallengebackend.repository.impl;
 
-import com.java.spring.apichallengebackend.domain.Movie;
 import com.java.spring.apichallengebackend.enums.ChallengeTypeErrorEnum;
 import com.java.spring.apichallengebackend.exception.ChallengeCustomException;
 import com.java.spring.apichallengebackend.repository.SagaStarWarsRepository;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -30,7 +28,7 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
 
     @Override
     @Transactional
-    public Movie updateDescriptionMovie(Long episodeId, String description, String version) {
+    public StarWarsEntity updateDescriptionMovie(Long episodeId, String description, String version) {
         boolean isExistEntity = repository.existsById(episodeId);
         if (!isExistEntity) {
             throw new ChallengeCustomException(
@@ -52,14 +50,9 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
     }
 
     @Override
-    public List<Movie> getMovies() {
-        List<Movie> movieList = new ArrayList<>();
+    public List<StarWarsEntity> getMovies() {
         try {
-            var moviesEntity = repository.findAll();
-            moviesEntity.forEach(entity -> {
-                movieList.add(buildMovie(entity)
-                );
-            });
+            return repository.findAll();
         } catch (Exception e) {
             log.error("An error occurred while trying to retrieve data from the database {}", e.getMessage());
             throw new ChallengeCustomException(
@@ -67,18 +60,15 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "Error to retrieve data");
         }
-        return movieList;
     }
 
     @Override
-    public Movie getMovie(Long episodeId) {
-        Movie movie = null;
+    public StarWarsEntity getMovie(Long episodeId) {
         
         if (isNull(episodeId)) {
             Long generateRandomEpisodeId = new Random().nextLong(1L, 7L);
             Optional<StarWarsEntity> entityOptional = repository.findById(generateRandomEpisodeId);
-            movie = entityOptional
-                    .map(StarWarsRepositoryUseCaseImpl::buildMovie)
+            return entityOptional
                     .orElseThrow(() -> new ChallengeCustomException(
                         ChallengeTypeErrorEnum.FILM_NOT_FOUND, 
                         HttpStatus.NOT_FOUND,
@@ -87,16 +77,13 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
 
         } else {
             Optional<StarWarsEntity> entityOptional = repository.findById(episodeId);
-            movie = entityOptional
-                    .map(StarWarsRepositoryUseCaseImpl::buildMovie)
+            return entityOptional
                     .orElseThrow(() -> new ChallengeCustomException(
                         ChallengeTypeErrorEnum.FILM_NOT_FOUND, 
                         HttpStatus.NOT_FOUND,
                         "Film Not Found to ID: " + episodeId)
                     );
         }
-
-        return  movie;
     }
 
     @Override
@@ -122,19 +109,6 @@ public class StarWarsRepositoryUseCaseImpl implements StarWarsRepositoryUseCase 
                 "Operation internal error");
         }
         
-    }
-
-    private static Movie buildMovie(StarWarsEntity entity) {
-        return Movie
-                .builder()
-                .title(entity.getTitle())
-                .episode_id(entity.getEpisode_id())
-                .opening_crawl(entity.getOpening_crawl())
-                .director(entity.getDirector())
-                .producer(entity.getProducer())
-                .release_date(entity.getRelease_date())
-                .version(entity.getVersion())
-                .build();
     }
 
 }

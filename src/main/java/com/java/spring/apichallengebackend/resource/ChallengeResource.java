@@ -1,7 +1,7 @@
 package com.java.spring.apichallengebackend.resource;
 
-import com.java.spring.apichallengebackend.domain.Movie;
-import com.java.spring.apichallengebackend.domain.UpdateDescriptionRequest;
+import com.java.spring.apichallengebackend.mappers.MovieMapper;
+import com.java.spring.apichallengebackend.resource.dto.MovieDto;
 import com.java.spring.apichallengebackend.resource.swagger.ChallengeResourceSwagger;
 import com.java.spring.apichallengebackend.usecase.ChallengeUseCase;
 import lombok.RequiredArgsConstructor;
@@ -21,25 +21,29 @@ public class ChallengeResource implements ChallengeResourceSwagger{
     private final ChallengeUseCase challengeService;
 
     @Override
-    public ResponseEntity<Movie> updateMovie(@RequestBody UpdateDescriptionRequest request, 
-                                         @PathVariable Long episodeId) {
+    public ResponseEntity<MovieDto> updateMovie(@RequestBody UpdateDescriptionRequest request, 
+                                                @PathVariable Long episodeId) {
 
-        return ResponseEntity.ok(challengeService.updateMovie(episodeId, request.getDescription()));
+        return ResponseEntity.ok(
+            MovieMapper.INSTANCE.map(
+                challengeService.updateMovie(episodeId, request.getDescription())
+            )
+        );
     }
 
     @Override
-    public ResponseEntity<List<Movie>> listMovies() {
-        return ResponseEntity.ok(challengeService.listMovies());
+    public ResponseEntity<List<MovieDto>> listMovies() {
+        return ResponseEntity.ok(MovieMapper.INSTANCE.map(challengeService.listMovies()));
     }
 
     @Override
-    public ResponseEntity<Movie> getMovie() {
-        return ResponseEntity.ok(challengeService.getMovie(null));
+    public ResponseEntity<MovieDto> getMovie() {
+        return ResponseEntity.ok(MovieMapper.INSTANCE.map(challengeService.getMovie(null)));
     }
 
     @Override
-    public ResponseEntity<Movie> getMovie(@PathVariable Long episodeId) {
-        return ResponseEntity.ok(challengeService.getMovie(episodeId));
+    public ResponseEntity<MovieDto> getMovie(@PathVariable Long episodeId) {
+        return ResponseEntity.ok(MovieMapper.INSTANCE.map(challengeService.getMovie(episodeId)));
     }
 
 }

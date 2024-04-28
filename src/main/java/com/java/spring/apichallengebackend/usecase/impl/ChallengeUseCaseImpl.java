@@ -1,6 +1,7 @@
 package com.java.spring.apichallengebackend.usecase.impl;
 
 import com.java.spring.apichallengebackend.domain.Movie;
+import com.java.spring.apichallengebackend.mappers.StarWarsEntityMapper;
 import com.java.spring.apichallengebackend.repository.StarWarsRepositoryUseCase;
 import com.java.spring.apichallengebackend.usecase.ChallengeUseCase;
 
@@ -23,17 +24,19 @@ public class ChallengeUseCaseImpl implements ChallengeUseCase {
 
         String newVersion = getNewVersion(episodeId);
         log.info("Updating version to {}", newVersion);
-        return repositoryUseCase.updateDescriptionMovie(episodeId, newDescription, newVersion);
+        return StarWarsEntityMapper.INSTANCE.map(
+            repositoryUseCase.updateDescriptionMovie(episodeId, newDescription, newVersion)
+        );
     }
 
     @Override
     public List<Movie> listMovies() {
-        return repositoryUseCase.getMovies();
+        return StarWarsEntityMapper.INSTANCE.map(repositoryUseCase.getMovies());
     }
 
     @Override
     public Movie getMovie(Long episodeId) {
-        return repositoryUseCase.getMovie(episodeId);
+        return StarWarsEntityMapper.INSTANCE.map(repositoryUseCase.getMovie(episodeId));
     }
 
     private String getNewVersion(Long episodeId) {
