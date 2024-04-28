@@ -2,7 +2,7 @@ package com.java.spring.apichallengebackend.external.gateway.impl;
 
 import com.java.spring.apichallengebackend.domain.SagaStarWars;
 import com.java.spring.apichallengebackend.external.clients.StarWarsClient;
-import com.java.spring.apichallengebackend.external.gateway.CallExternalClientGateway;
+import com.java.spring.apichallengebackend.external.gateway.StarWarsExternalClientGateway;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class CallExternalClientGatewayimpl implements CallExternalClientGateway {
+public class StarWarsExternalClientGatewayimpl implements StarWarsExternalClientGateway {
 
     @Autowired
     private StarWarsClient client;

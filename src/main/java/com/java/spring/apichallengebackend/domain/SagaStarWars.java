@@ -11,5 +11,5 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SagaStarWars {
 
-    private List<StarWarsData> results;
+    private List<Movie> results;
 }
