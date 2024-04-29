@@ -5,6 +5,7 @@ import com.java.spring.apichallengebackend.mappers.StarWarsEntityMapper;
 import com.java.spring.apichallengebackend.repository.StarWarsRepositoryUseCase;
 import com.java.spring.apichallengebackend.usecase.ChallengeUseCase;
 
+import com.java.spring.apichallengebackend.utils.GenerateVersion;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +23,7 @@ public class ChallengeUseCaseImpl implements ChallengeUseCase {
     @Override
     public Movie updateMovie(Long episodeId, String newDescription) {
 
-        String newVersion = getNewVersion(episodeId);
+        String newVersion = GenerateVersion.getNewVersion(repositoryUseCase.getVersion(episodeId));
         log.info("Updating version to {}", newVersion);
         return StarWarsEntityMapper.INSTANCE.map(
             repositoryUseCase.updateDescriptionMovie(episodeId, newDescription, newVersion)
@@ -37,11 +38,5 @@ public class ChallengeUseCaseImpl implements ChallengeUseCase {
     @Override
     public Movie getMovie(Long episodeId) {
         return StarWarsEntityMapper.INSTANCE.map(repositoryUseCase.getMovie(episodeId));
-    }
-
-    private String getNewVersion(Long episodeId) {
-        String version = repositoryUseCase.getVersion(episodeId);
-        int incrementalVersion = Integer.parseInt(version.substring(1));
-        return "v".concat(String.valueOf(incrementalVersion+1));
     }
 }

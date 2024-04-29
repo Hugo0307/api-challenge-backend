@@ -19,6 +19,7 @@
         <spring-doc.version>2.5.0</spring-doc.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <maven.compile.version>3.8.1</maven.compile.version>
+        <lombok.version>1.18.32</lombok.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -84,14 +85,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
             </plugin>
             <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -105,6 +98,11 @@
                         <groupId>org.mapstruct</groupId>
                         <artifactId>mapstruct-processor</artifactId>
                         <version>${org.mapstruct.version}</version>
+                    </path>
+                    <path>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                        <version>${lombok.version}</version>
                     </path>
                 </annotationProcessorPaths>
             </configuration>

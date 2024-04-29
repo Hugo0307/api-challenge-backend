@@ -25,7 +25,7 @@ public class LoadSagaDataUseCaseImpl implements LoadSagaDataUsecase {
 
     private final StarWarsExternalClientGateway externalClientGateway;
 
-    private final StarWarsRepositoryUseCase repositoryUsecase;
+    private final StarWarsRepositoryUseCase repositoryUseCase;
 
     private final InternalProcessDataUseCase internalProcessDataUsecase;
 
@@ -39,13 +39,13 @@ public class LoadSagaDataUseCaseImpl implements LoadSagaDataUsecase {
 
             SagaStarWars saga = sagaOptional.orElse(internalProcessDataUsecase.parseDataFileToObject());
 
-            repositoryUsecase.saveMovie(externalProcessDataUseCase.buildEntityList(saga));
+            repositoryUseCase.saveMovie(externalProcessDataUseCase.buildEntityList(saga));
         }
     }
 
     private boolean isExistsDataInMemory() {
-        List<Movie> movies = StarWarsEntityMapper.INSTANCE.map(repositoryUsecase.getMovies());
-        return movies.size() > 0;
+        List<Movie> movies = StarWarsEntityMapper.INSTANCE.map(repositoryUseCase.getMovies());
+        return !movies.isEmpty();
     }
 
 }

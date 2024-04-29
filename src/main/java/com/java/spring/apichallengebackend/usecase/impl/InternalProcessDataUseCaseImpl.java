@@ -3,7 +3,10 @@ package com.java.spring.apichallengebackend.usecase.impl;
 import java.io.File;
 import java.io.IOException;
 
+import com.java.spring.apichallengebackend.enums.ChallengeTypeErrorEnum;
+import com.java.spring.apichallengebackend.exception.ChallengeCustomException;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,8 +25,11 @@ public class InternalProcessDataUseCaseImpl implements InternalProcessDataUseCas
             File file = loadFile();
             return new ObjectMapper().readValue(file, SagaStarWars.class);
         } catch (Exception e) {
-            log.error("Error: {}", e.getMessage());
-            return null;
+            log.error("Occurred an error while reading file: {}", e.getMessage());
+            throw new ChallengeCustomException(
+                    ChallengeTypeErrorEnum.INTERNAL_ERROR,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Occurred an internal error");
         }
     }
 
@@ -37,8 +43,11 @@ public class InternalProcessDataUseCaseImpl implements InternalProcessDataUseCas
             }
             return file;
         } catch (IOException e) {
-            log.error("Error: {}", e.getMessage());
-            return null;
+            log.error("Error to recover file: {}", e.getMessage());
+            throw new ChallengeCustomException(
+                    ChallengeTypeErrorEnum.INTERNAL_ERROR,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Occurred an internal error");
         }
     }
 
