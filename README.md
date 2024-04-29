@@ -51,3 +51,7 @@ Sem problemas, siga os 3 passos abaixo e seja feliz:
     ```
     SELECT * FROM MOVIE
     ```
+
+<h3>OPEN API<h3>
+
+<img src="./src/main/resources/static/openapi.png">

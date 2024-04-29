@@ -1,0 +1,194 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+tags:
+  - name: API CHALLENGE BACKEND DEVELOPER
+    description: API construída para atender requisitos de um desafio backend
+paths:
+  /v1/api/starwars/movie/{episodeId}:
+    patch:
+      tags:
+        - API CHALLENGE BACKEND DEVELOPER
+      summary: >-
+        Atualiza a descrição (opening crawl) de um determinado filme da saga
+        Star Wars
+      description: >-
+        Recebe um body com a nova descrição e um id do episódio a ter a
+        descrição alterada
+      operationId: updateMovie
+      parameters:
+        - name: episodeId
+          in: path
+          description: Id do episódio que terá a descrição alterada
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDescriptionRequest'
+        required: true
+      responses:
+        '204':
+          description: Operação realizada com sucesso
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MovieDto'
+        '400':
+          description: Id fornecido é inválido
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Episódio inexistente, não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Ocorreu um erro interno durante operação
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/api/starwars/movies:
+    get:
+      tags:
+        - API CHALLENGE BACKEND DEVELOPER
+      summary: Lista todos os filmes da saga
+      description: Devolve uma lista com informações de todos os filmes da saga Star Wars
+      operationId: listMovies
+      responses:
+        '200':
+          description: Operação realizada com sucesso
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MovieDto'
+        '500':
+          description: Ocorreu um erro interno durante operação
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/api/starwars/movie/detail:
+    get:
+      tags:
+        - API CHALLENGE BACKEND DEVELOPER
+      summary: Lista detalhes de um filme
+      description: Detalha informações de um filme da saga Star Wars de forma aleatória
+      operationId: getMovie
+      responses:
+        '200':
+          description: Operação realizada com sucesso
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MovieDto'
+        '500':
+          description: Ocorreu um erro interno durante operação
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/api/starwars/movie/detail/{episodeId}:
+    get:
+      tags:
+        - API CHALLENGE BACKEND DEVELOPER
+      summary: Lista detalhes de um filme específico
+      description: >-
+        Recebe o id do episódio do filme e detalha informações de um filme
+        específico da saga Star Wars
+      operationId: getMovie_1
+      parameters:
+        - name: episodeId
+          in: path
+          description: Id do episódio a ser consultado
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Operação realizada com sucesso
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MovieDto'
+        '400':
+          description: Id fornecido é inválido
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Episódio inexistente, não encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Ocorreu um erro interno durante operação
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    UpdateDescriptionRequest:
+      required:
+        - description
+      type: object
+      properties:
+        description:
+          maxLength: 600
+          minLength: 1
+          type: string
+          description: Texto da nova descrição
+      description: Nova descrição para o filme
+    ErrorResponse:
+      type: object
+      properties:
+        title:
+          type: string
+        status:
+          type: string
+        detail:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    MovieDto:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Título do episódio
+        episode_id:
+          type: integer
+          description: Identificador único do episódio
+          format: int64
+        opening_crawl:
+          type: string
+          description: Descrição do filme
+        director:
+          type: string
+          description: Pessoa que dirigiu o filme
+        producer:
+          type: string
+          description: Pessoas que produziram o filme
+        release_date:
+          type: string
+          description: Data de lançamento
+          example: '2024-04-27'
+        version:
+          type: string
+          description: Indica quantas vezes a descrição foi alterada
